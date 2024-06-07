@@ -2,9 +2,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
+const dotenv = require('dotenv');
+
+// Load environment variables from .env file
+dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Middleware to parse form data
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -26,7 +30,13 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 // Connect to MongoDB
-const uri = 'mongodb+srv://bossubhadip19:pXKlofB3xIlade9F@cluster0.ssdoece.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const uri = process.env.MONGODB_URI;
+
+if (!uri) {
+    console.error('MONGODB_URI environment variable is not defined');
+    process.exit(1); // Exit the application if the URI is not set
+}
+
 mongoose.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true
